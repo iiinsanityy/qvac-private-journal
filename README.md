@@ -85,4 +85,4 @@ Private journaling should stay private. Cloud AI reads your thoughts. QVAC runs 
 
 ## License
 
-MIT - See LICENSE file
+MIT - See LICENSE file 
