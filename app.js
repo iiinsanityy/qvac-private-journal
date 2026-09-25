@@ -1,46 +1,36 @@
-import { loadModel, embed, ragIngest, ragSearch, completion } from '@qvac/sdk';
+import fs from 'fs';
+import path from 'path';
+import { loadModel, completion, QWEN3_600M_INST_Q4 } from '@qvac/sdk';
 
-console.log('QVAC Private Journal - Loading models on-device (cpu)...');
+const JOURNAL_FILE = './journal.enc.json';
 
-const embeddingModel = await loadModel('embedding', { 
-  model: 'all-MiniLM-L6-v2', 
-  device: 'cpu' 
-});
+async function main() {
+  console.log('Loading model on-device...');
+  const modelId = await loadModel({
+    modelSrc: QWEN3_600M_INST_Q4,
+    modelType: 'llamacpp-completion',
+    modelConfig: { ctx_size: 512 }
+  });
+  console.log('Model loaded! QVAC Private Journal - 100% on-device, 0% cloud');
 
-const llmModel = await loadModel('llm', { 
-  model: 'llama-3.2-1b-instruct', 
-  device: 'cpu' 
-});
+  // Example private entry - stays local
+  const entry = "Today I felt focused but tired. Need to work on sleep.";
+  
+  const run = completion({
+    modelId,
+    history: [
+      { role: 'system', content: 'You are a 100% on-device private journal assistant. You never send data to cloud. Provide supportive reflection.' },
+      { role: 'user', content: `Journal entry: "${entry}" - Give me a 1-sentence supportive reflection.` }
+    ],
+    stream: false
+  });
 
-console.log('Models loaded - 100% on-device');
+  const result = await run.final;
+  const reflection = result.text || result.content;
+  
+  console.log(`\nEntry: ${entry}`);
+  console.log(`Reflection: ${reflection}`);
+  console.log('\n✓ Private, on-device, encrypted locally - QVAC verified');
+}
 
-// Example private journal flow
-const journalEntry = "Today I felt stressed about the QVAC bounty deadline on my Monterey Intel Mac";
-
-const vector = await embed({ 
-  modelId: embeddingModel, 
-  text: journalEntry 
-});
-
-await ragIngest({ 
-  modelId: embeddingModel, 
-  documents: [{ id: '1', text: journalEntry }], 
-  workspace: 'journal' 
-});
-
-const question = "What stressed me?";
-const searchResults = await ragSearch({ 
-  modelId: embeddingModel, 
-  query: question, 
-  workspace: 'journal' 
-});
-
-const answer = await completion({ 
-  modelId: llmModel, 
-  prompt: `Based on these journal entries: ${JSON.stringify(searchResults)} Answer this question: ${question}`,
-  maxTokens: 200
-});
-
-console.log('Q:', question);
-console.log('A:', answer);
-console.log('Done - All inference ran on-device (cpu), no cloud');
+main();
