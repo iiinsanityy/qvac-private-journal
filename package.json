@@ -1,0 +1,14 @@
+{
+  "name": "qvac-private-journal",
+  "version": "1.0.0",
+  "description": "100% on-device private journal using QVAC SDK - embed + ragIngest + ragSearch + completion all local",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@qvac/sdk": "^0.19.1",
+    "express": "^4.18.2"
+  }
+}
