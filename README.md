@@ -22,7 +22,7 @@ Functions used:
 All inference runs on-device (cpu). No cloud API.
 
 ## What it does (detailed)
-Save private thoughts → embedded locally with QVAC → stored in local vector store via `ragIngest` → ask natural language questions → `ragSearch` finds relevant entries → `completion` answers using local LLM.
+Save private thoughts → embedded locally with QVAC → stored in local vector store via `ragIngest` → ask natural language questions → `ragSearch` finds relevant entries → `completion` answers using local LLM. 100% private, offline.
 
 ## Install
 ```bash
