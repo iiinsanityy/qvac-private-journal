@@ -1,31 +1,25 @@
 # QVAC Private Journal - 100% On-Device
 
-Private journaling with **QVAC SDK 0.19.1** running entirely on-device. No cloud, no data leaves your Mac.
+Private journaling with **QVAC SDK 0.19.1** running entirely on-device. No cloud, no data leaves your device.
 
 ## What it does and which QVAC function it calls
-QVAC Private Journal saves journal entries on-device — each entry is embedded with `embed()` and stored via `ragIngest()`, then users can ask natural questions that are answered by `ragSearch()` + `completion()` after loading models with `loadModel()` on CPU.
+QVAC Private Journal saves journal entries locally in `journal.enc.json` (100% private, 0% cloud) and provides supportive AI reflections on-device. It calls `loadModel({ modelSrc: QWEN3_600M_INST_Q4, modelType: 'llamacpp-completion' })` and `completion({ modelId, history, stream: false })` with `run.final`.
 
 ## Why I built it
-I built it because private journaling should stay private — cloud AI reads your thoughts. QVAC keeps everything local, and I wanted it to work on my Monterey 12.7 Intel Mac without the 20GB Xcode requirement.
+I built it because journaling should stay private — cloud AI reads your thoughts. QVAC keeps everything local, and I wanted it to work on my Monterey 12.7 Intel Mac without the 20GB Xcode requirement.
 
 ## SDK Version
 **@qvac/sdk: 0.19.1**
 
 Functions used:
-- `loadModel('embedding', {model: 'all-MiniLM-L6-v2', device: 'cpu'})`
-- `loadModel('llm', {model: 'llama-3.2-1b-instruct', device: 'cpu'})`
-- `embed()`
-- `ragIngest()`
-- `ragSearch()`
-- `completion()`
+- `loadModel({ modelSrc: QWEN3_600M_INST_Q4, modelType: 'llamacpp-completion', modelConfig: { ctx_size: 512 } })`
+- `completion({ modelId, history, stream: false })`
 
-All inference runs on-device (cpu). No cloud API.
-
-## What it does (detailed)
-Save private thoughts → embedded locally with QVAC → stored in local vector store via `ragIngest` → ask natural language questions → `ragSearch` finds relevant entries → `completion` answers using local LLM. 100% private, offline.
+All inference runs on-device via llama.cpp. No cloud API.
 
 ## Install
 ```bash
 git clone https://github.com/iiinsanityy/qvac-private-journal.git
 cd qvac-private-journal
 npm install
+npm start
