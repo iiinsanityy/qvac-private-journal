@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Private journaling with QVAC SDK 0.19.1 running entirely on-device",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node app.js"
   },
